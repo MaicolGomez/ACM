@@ -1,0 +1,136 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define MAXN 512
+#define MAXE 65536
+#define INF 1000000000
+
+#define OTHER(x, y) ( e[(x)].a == y ? e[(x)].b : e[(x)].a )
+#define RESIDUAL(x, y) ( (y) == e[(x)].a ? e[(x)].cd-e[(x)].f : e[(x)].cr+e[(x)].f )
+
+struct node {
+	vector<int> c;
+    int point;
+} n[MAXN];
+
+struct edge {
+	int a, b, cd, cr, f;
+} e[MAXE];
+
+int EDGES;
+
+void init(int N) {
+	for (int i=0; i<N; i++) n[i].c.clear();
+	EDGES = 0;
+}
+
+void add_edge(int a, int b, int cd, int cr) {
+	e[EDGES].a = a; e[EDGES].b = b;
+	e[EDGES].cd = cd; e[EDGES].cr = cr;
+	n[e[EDGES].a].c.push_back(EDGES);
+	n[e[EDGES].b].c.push_back(EDGES);
+	EDGES++;
+}
+
+bool bfs(int *r, int N, int SOURCE, int SINK) {
+	int i, S, E, s[MAXN], cur, next, cure;
+
+	for (i=0; i<N; i++) {r[i] = -1; n[i].point = 0;} r[SOURCE] = 0;
+	S = E = 0; s[E++] = SOURCE;
+	while (S < E) {
+		cur = s[S++];
+		for (i=0; i<(int)n[cur].c.size(); i++) {
+			cure = n[cur].c[i];
+			next = OTHER(cure, cur);
+			if (r[next] == -1 && RESIDUAL(cure, cur) > 0) {
+				s[E++] = next;
+				r[next] = r[cur]+1;
+			}
+		}
+	}
+	return r[SINK] != -1;
+}
+
+int dfs(int *r, int SOURCE, int SINK, int cur, int flowcap) {
+	if (cur == SINK) return flowcap;
+
+	int curflow = 0;
+	for (; curflow<flowcap && n[cur].point<(int)n[cur].c.size(); n[cur].point++) {
+		int cure = n[cur].c[n[cur].point];
+		int next = OTHER(cure, cur);
+
+		if (r[next] == r[cur]+1 && RESIDUAL(cure, cur) > 0) {
+			int tmp = dfs(r, SOURCE, SINK, next, min(flowcap, RESIDUAL(cure, cur)));
+			curflow += tmp;
+			if (cur == e[cure].a) e[cure].f += tmp;
+			else e[cure].f -= tmp;
+		}
+	}
+	return curflow;
+}
+
+int dinic(int N, int SOURCE, int SINK) {
+	int r[MAXN];
+	for (int i=0; i<EDGES; i++) e[i].f = 0;
+
+	int FLOW = 0;
+	while (bfs(r, N, SOURCE, SINK)) FLOW += dfs(r, SOURCE, SINK, SOURCE, INF);
+	return FLOW;
+}
+#define NN 501
+int a[NN] , b[NN];
+
+int main(){
+    int n , k;
+    while( scanf("%d%d",&n,&k) == 2 and (n||k) ){
+        int SOURCE = n, SINK = n+1;
+        init( n + 2 );
+        for(int i = 0; i < n ; i++){
+            sc(a[i]);
+            if( a[i]&1 ) add_edge(SOURCE, i, 1, 0);
+            else add_edge(i , SINK , 1, 0); ;
+        }
+        for(int i = 0 ; i < n ; i++)
+            for(int j = 0 ; j < n; j++)
+                if( (a[i]&1) and !(a[j]&1) and abs( a[i] - a[j] ) <= k ) add_edge( i , j , 1 , 0);
+        
+        printf("%d\n",dinic( n + 2 , SOURCE , SINK ));
+            
+    }
+    
+    return 0;
+}

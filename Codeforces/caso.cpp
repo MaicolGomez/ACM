@@ -1,0 +1,14 @@
+#include<cstdio>
+#include<iostream>
+using namespace std;
+int main(){
+    int n = 100000;
+    for(int i = 0 ; i < n ; i++)
+        cout << ".";
+    cout << endl;
+    cout << n << endl;
+    for(int i = 0 ; i < n ; i++){
+        cout << 1 << " " << n << endl;
+    }
+    return 0;
+}

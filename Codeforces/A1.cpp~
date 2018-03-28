@@ -1,0 +1,127 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 10009
+#define N 100005
+#define ALF 30
+
+char s[N];
+bool vis[ALF];
+
+
+string suma(const string &a, const string &b) 
+{ 
+	int LA = a.size(), LB = b.size(), L = max(LA, LB), carry = 0;
+    
+    string x = string(L, '0'); 
+    
+    while(L--)
+    {
+    	LA--; LB--;
+    	
+        if(LA >= 0) carry += a[LA] - '0'; 
+        if(LB >= 0) carry += b[LB] - '0'; 
+        
+        if(carry < 10) x[L] = '0' + carry, carry = 0;
+        else x[L] = '0' + carry - 10, carry = 1;
+    }
+    
+    if(carry) x = '1' + x; 
+    return x;
+} 
+
+
+//### PRODUCTO DE CADENAS ##################################################################
+string prod(string a, string b)
+{
+	if(a=="0" || b=="0") return "0";
+	else if(a.size()==1)
+	{
+		int m = a[0] - '0';
+		
+		string ans = string(b.size(), '0');
+		
+		int lleva = 0;
+		
+		for(int i=b.size()-1; i>=0; i--)
+		{
+			int d = (b[i] - '0') * m + lleva;
+			lleva = d/10;
+			ans[i] += d%10;
+		}
+		if(lleva) ans = (char)(lleva + '0') + ans;
+		return ans;
+	}
+	else if(b.size()==1) return prod(b, a);
+	else
+	{
+		string ans = "0";
+		string ceros = "";
+		for(int i=a.size()-1; i>=0; i--)
+		{
+			string s = prod(string(1, a[i]), b) + ceros;
+			ceros += "0";
+			ans = suma(ans, s);
+		}
+		return ans;
+	}
+}
+
+string num[10] = { "0" , "1" , "2" , "3" , "4" , "5" , "6" , "7" , "8" , "9" };
+
+int main(){
+    while( scanf("%s",s) == 1 ){
+        int n = strlen(s);
+        me(vis,0);
+        string ans = "1";
+        string nueve = "9";
+        ll tot = 10;
+        if( s[0] == '?' ) ans = prod(ans , nueve);
+        else if( s[0] >= 'A' && s[0] <= 'Z' ) ans = prod(ans , nueve), tot--;
+        
+        for(int i = 1 ; i < n ; i++){
+            if( s[i] == '?' ) ans += '0';
+            else if( s[i] != s[0] && s[i] >= 'A' && s[i] <= 'Z' ) vis[ s[i] - 'A' ] = 1;
+        }
+        
+        for(int i = 0 ; i < 10 ; i++)if( vis[i] ){
+            if( tot == 10 ) ans += '0';
+            else ans = prod( ans , num[tot--] );
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}
+

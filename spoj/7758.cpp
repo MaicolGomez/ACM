@@ -1,0 +1,105 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 1000001
+
+int next[N][27] , T[N] , term[N] , fa[N] , node;
+
+void add(char *s){
+    int ac = 0;
+    int l = strlen(s);
+    for(int i = 0 ; i < l ; i++){
+        if( next[ac][s[i] - 'a'] == 0 ) me(next[node],0), next[ac][s[i] - 'a'] = node++;
+        fa[next[ac][s[i] - 'a']] = ac;
+        ac = next[ac][s[i]- 'a'];
+    }
+    term[ac] = 1;
+}
+
+void aho(){
+    queue<int> Q;
+    for(int i = 0 ; i < 26 ; i++){
+        int v = next[0][i];
+        if( v ) T[v] = 0, Q.push(v);
+    }
+    while( !Q.empty() ){
+        int u = Q.front(); Q.pop();
+        for(int i = 0 ; i < 26 ; i++){
+            int v = next[u][i] , x = next[T[u]][i];
+            if( v == 0 ) next[u][i] = x;
+            else Q.push(v) , T[v] = x;//, term[v] |= term[x];
+        }
+    }
+}
+
+int t[N];
+
+int f(int u){
+    if( u == 0 ) return 0;
+    //cout << u << endl;
+    int &ret = t[u];
+    if( ret != -1 ) return ret;
+    ret = term[u] + max( f(fa[u]) , f( T[u] ) );
+    return ret;
+}
+
+char s[1005];
+int main(){
+    int n;
+    while( sc(n) == 1 and n ){
+        node = 1;
+        me(next[0],0);
+        me(T,0);
+        me(term,0);
+        for(int i = 0 ; i < n ; i++){
+            scanf("%s",s);
+            add(s);
+        }
+        aho();
+        me(t,-1);
+        int ans = 0;
+        /*for(int i = 0 ; i < node ; i++)
+            cout << i << " " << T[i] << " " << term[i] << " " << fa[i] << endl;
+          */  
+        for(int i = 1 ; i < node ; i++)
+            if( term[i] )
+                ans = max( ans , f(i) );
+            
+        printf("%d\n",ans);
+    }
+    return 0;
+}

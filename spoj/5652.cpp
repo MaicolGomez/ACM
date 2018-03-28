@@ -1,0 +1,33 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<deque>
+#include<map>
+#include<set>
+#include<string>
+#include<sstream>
+using namespace std;
+#define inf (1<<29)
+#define eps 1e-8
+#define ll long long
+#define vi vector<int>
+#define all(v) v.begin() , v.end()
+#define sc(x) scanf("%d",&x)
+#define me(t,val) memset( t , val , sizeof(t) )
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define N 300002
+#define fi first
+#define se second
+#define mp(a,b) make_pair(a,b)
+
+
+int main(){
+    int n , q , c , x , y;
+    while( scanf("%d%d",&n,&c) == 2 ){
+        
+    }
+}

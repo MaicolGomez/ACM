@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<30)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0)
+#define N 5005
+
+ll n , m;
+
+void f(vi v1 , vi v2,int p = 1,int e = 1){
+	int jump = 0;
+	while( v1.size() + v2.size() < n ){
+		int r = n - p - 1 - jump;
+		int can = n - p;
+		ll t = (1LL<<(n-p));
+		//jump = 0;
+		cout << (1LL<<r) << " " << m << endl;
+		while( t > 0 and e <= n ){
+			if( (1LL<<r) >= m ){
+				v1.pb( e );
+				p++;
+				e++;
+				break;
+			}
+			else{
+				m -= (1LL<<r);
+				v2.pb( e );
+				e++;
+				jump++;
+				t -= (1LL<<r);
+				r--;
+			}
+		}
+	}
+	
+	for(int i = 0 ; i < v1.size() ; i++)
+			cout << v1[i] << " ";
+	for(int i = v2.size() - 1 ; i >= 0 ; i--)
+		cout << v2[i] << " ";
+	cout << "\n";
+}
+
+int main(){
+	while( cin >> n >> m ){
+		vi q1 , q2;
+		f( q1 , q2 );
+	}
+}

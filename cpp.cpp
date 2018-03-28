@@ -1,0 +1,99 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 100005
+
+int T[4*N] , F[4*N];
+
+void push(int node,int x,int y){
+    if( F[node] ){
+        T[node] += F[node];
+        if( x != y ) F[L(node)] += F[node] , F[R(node)] += F[node];
+    }
+    F[node] = 0;
+}
+
+int query(int node,int x,int y,int a,int b){
+    push( node , x , y );
+    if( b < x or y  < a ) return 0;
+    if( a <= x and y <= b ) return T[node];
+    int mid = M( x , y );
+    return query( L(node) , x , mid , a , b ) + query( R(node) , mid + 1 ,  y , a , b );
+}
+
+void update(int node,int x,int y,int a,int b,int c){
+    push( node , x , y );
+    if( b < x or y  < a ) return;
+    if( a <= x and y <= b ){
+        F[node] += c;
+        push( node , x , y );
+        return;
+    }
+    int mid = M(x,y);
+    update( L(node) , x , mid , a , b , c );
+    update( R(node) , mid + 1 , y , a , b , c );
+}
+
+int pos[N];
+
+int main(){
+    int test = 1 , tc;
+    sc(tc);
+    while( tc-- ){
+        int n , x;
+        sc(n);
+        me(T,0);
+        me(F,0);
+        for(int i = 0 ; i < n ; i++){
+            sc(x);
+            pos[x] = i+1;
+        }
+        printf("Caso #%d:",test++);
+        int t1 = 1 , t2 = n;
+        for(int i = 1 ; i <= n ; i++){
+            int a , b , ans , c;
+            if( i&1 )
+                a = 0 , b = pos[t1] - 1 , c = 1 , x = t1 , t1++;
+            else a = pos[t2] - 1 , b = n - 1 , c = -1 , x = t2 , t2--;
+            ans = abs(x - (pos[x] + query( 0 , 0 , n - 1 , pos[x] - 1 , pos[x] - 1 )));
+            update( 0 , 0 , n - 1 , a , b , c );
+            printf(" %d",ans);
+        }
+        printf("\n");
+    }
+    return 0;
+}

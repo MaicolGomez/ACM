@@ -1,0 +1,87 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<30)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define fi first
+#define se second
+#define MOD 10009
+#define N 65
+ll C[N][N];
+int bit[N];
+ll T[N] , t[N] ;
+
+void comb(){
+    C[0][0] = 1;
+    for(int i = 1 ; i < N ; i++){
+        C[i][0] = C[i][i] =  1;
+        for(int j = 1 ; j < i ; j++)
+            C[i][j] = C[i-1][j] + C[i-1][j-1];
+    }
+}
+
+ll g(int len ,int n ){
+    if( n < 0 ) return 0;
+    if( len == 0 ){
+        if( n <= bit[len] ) return 1;
+        return 0;
+    }
+    if( bit[len] == 0 ) return g( len - 1 , n );
+    return C[len][n] + g( len - 1 , n - 1 );
+}
+
+ll f(ll n , int k){
+    if( n <= 0 ) return 0;
+    if( k == 0 ) return 1;
+    ll m = n;
+    for(int i = 0 ; i < 64 ; i++){
+        bit[i] = m % 2;
+        m /= 2;
+    }
+    for(int i = 1 ; i < 64 ; i++)
+        t[i] = g( 63 , i );
+    t[1]--;
+    for(int i = 1 ; i < k ; i++){
+        for(int j = 0 ; j < 64 ; j++)
+            T[j] = t[j];
+        for(int j = 2 ; j < 64 ; j++)
+            t[ __builtin_popcount(j) ] += T[j];
+    }
+    return t[1];
+}
+
+int main(){
+    comb();
+    ll lo , hi;
+    int k;
+    while( cin >> lo >> hi >> k ){
+        if( lo == 0 && hi == 0 ) break;
+        cout << f(hi,k) - f(lo-1,k) << "\n";
+    }
+    return 0;
+}

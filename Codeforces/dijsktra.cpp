@@ -1,0 +1,112 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 10009
+#define ios ios::sync_with_stdio(0);
+#define N 210001
+
+vi adj[N] , cost[N];
+int pa[N];
+ll d[N];
+
+struct nodo{
+    int u ;
+    ll d;
+    nodo(){}
+    nodo(int U,ll D){
+        u = U , d = D;
+    }
+};
+
+bool operator<(nodo A,nodo B){
+        return A.d > B.d;
+}
+
+bool vis[N];
+
+int main(){
+    int n , m;
+    while( scanf("%d%d",&n,&m) == 2 ){
+        fill( d , d + n + 1 , (1LL<<60) );
+        for(int i = 0 ; i < n + 1 ; i++)
+            adj[i].clear() , cost[i].clear();
+        me(pa,-1);
+        me(vis,0);
+        int a , b , c;
+        for(int i = 0 ; i < m ; i++){
+            sc(a) , sc(b) , sc(c);
+            adj[a].pb(b) , cost[a].pb(c);
+            adj[b].pb(a) , cost[b].pb(c);
+        }
+        
+        pa[1] = -1;
+        d[1] = 0;
+        priority_queue<nodo> Q;
+        Q.push( nodo(1,0) );
+        while( !Q.empty() ){
+            nodo q = Q.top(); Q.pop();
+            int u = q.u;
+            ll di = q.d;
+            if( u == n ) break;
+            if( vis[u] ) continue;
+            vis[u] = 1;
+            for(int i = adj[u].size() - 1 ; i >= 0 ; i--){
+                int v = adj[u][i];
+                ll nd = di + cost[u][i];
+                if( d[v] > nd ){
+                    d[v] = nd;
+                    pa[v] = u;
+                    Q.push( nodo( v , nd ) );
+                }
+            }
+        }
+        
+        if( d[n] == 1LL<<60 ) cout << "-1\n";
+        else{
+            int x = n;
+            vi v;
+            while( x != -1 ){
+                v.pb(x);
+                x = pa[x];
+            }
+            for(int i = v.size() - 1 ; i >= 0 ; i--){
+                if( i != v.size() - 1 ) cout << ' ';
+                cout << v[i];
+            }
+            cout << '\n';
+        }
+    }
+    return 0;
+}

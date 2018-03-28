@@ -1,0 +1,75 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 101
+
+int A[10] , C[N][N] , B[10] , S , n;
+ll t[10][500][51];
+
+ll f(int x,int s,int can,int can2){
+    if( x == 10 ) return (can == 0 and (abs( S - 2 * s ) % 11 == 0));
+    ll &ret = t[x][s][can];
+    if( ret != -1 ) return ret;
+    ret = 0;
+    for(int i = 0 ; i <= min(A[x], can) ; i++){
+        int used = A[x] - i;
+        if( can2 < 0 or can < 0 ) continue;
+        ll r = (C[can2][used] * C[can][i])%MOD;
+        ret += (r * f( x + 1 , s + x * i , can - i , can2 - used ))%MOD;
+        ret %= MOD;
+    }
+    return ret;
+}
+
+int main(){
+    C[0][0] = 1;
+    for(int i = 1 ; i < N ; i++){
+        C[i][0] = C[i][i] = 1;
+        for(int j = 1 ; j < i ; j++)
+            C[i][j] = (C[i-1][j] + C[i-1][j-1])%MOD;
+    }
+    char s[105];
+    while( gets(s) ){
+        me(A,0);
+        n = strlen(s);
+        S = 0;
+        for(int i = 0 ; i < n ; i++)
+            A[ s[i] - '0' ]++ , S += (s[i] - '0');
+        
+        B[0] = A[0];
+        for(int i = 1 ; i < 10 ; i++)
+            B[i] = B[i-1] + A[i];
+
+        int puedo = ( n + 1 )/2;
+        ll ans = 0;
+        for(int i = 1 ; i < 10 ; i++)if( A[i] > 0 ){
+            A[i]--;
+            me(t,-1);
+            ans += f( 0 , i , puedo - 1 , n - puedo );
+            ans %= MOD;
+            A[i]++;
+        }
+        cout << ans << "\n";
+    }
+    return 0;
+}

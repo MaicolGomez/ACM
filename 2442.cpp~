@@ -1,0 +1,93 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 10
+#define ios ios::sync_with_stdio(0);
+#define N 1000501
+
+int e[N] , prime[N];
+
+void criba(){
+    me(prime,0);
+    for(int i = 2 ; i * i <= 1000000 ; i++)
+        if( !prime[i] )
+            for(int j = i * i ; j <= 1000000 ; j+=i)
+                prime[j] = i;
+}
+
+
+int fast(int a,int b){
+    if( b == 0 ) return 1;
+    if( b&1 )
+        return (a * fast( a , b - 1 )) % MOD;
+    
+    int t = fast( a , b/2 );
+    return (t*t)%MOD;
+    
+}
+
+void f(int a,int b,int c){
+    
+    e[a]++;
+    e[b]--, e[c]--;
+    
+    for(int i = 1000000 - 1 ; i >= 2 ; i--) e[i] += e[i+1];
+    
+    for(int i = 1000000 ; i >= 2 ; i--)if( prime[i] ){
+        e[ i/prime[i] ] += e[i];
+        e[ prime[i] ] += e[i];
+        e[i] = 0;
+    }
+    
+    int ans = 1;
+    int r = min( e[2] , e[5] );
+    e[2] -= r, e[5] -= r;
+    for(int i = 2 ; i <= 1000000 ; i++)if( e[i] ){
+        ans *= fast( i , e[i] );
+        ans %= MOD;
+    }
+    printf("%d\n",ans);
+}
+
+
+int main(){
+    int n , m;
+    criba();
+    while( scanf("%d%d",&n,&m) == 2 ){
+        f( n , m , n - m );
+    }
+    
+    return 0;
+}

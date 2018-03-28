@@ -1,0 +1,106 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 105
+
+string m[N][N];
+int R , C;
+map<string,int> m1;
+map<string,int> m2;
+
+int get1(string s){
+    if( m1.find(s) == m1.end() ) m1[s] = R++;
+    return m1[s];
+}
+
+int get2(string s){
+    if( m2.find(s) == m2.end() ) m2[s] = C++;
+    return m2[s];
+}
+
+string a[54] , b[54] , c[54];
+
+
+int main(){
+    int tc;
+    sc(tc);
+    while( tc-- ){
+        int n;
+        sc(n);
+        m1.clear();
+        m2.clear();
+        R = 0 , C = 0;
+        for(int i = 0 ; i < 101 ; i++)
+            for(int j = 0 ; j < 101 ; j++)
+                m[i][j] = "   ";
+        
+        for(int i = 0 ; i < n ; i++){
+            cin >> a[i] >> b[i] >> c[i];
+            while( c[i].size() < 3 ) c[i] = c[i] + " ";
+            m[ get1( a[i] ) ][ get2( b[i] ) ] = c[i];
+        }
+        sort( a , a + n );
+        sort( b , b + n );
+        R = unique( a , a + n ) - a;
+        C = unique( b , b + n ) - b;
+ 
+
+        string s = "";
+        s += "+---+";
+        for(int i = 0 ; i < C ; i++)
+            s += "---+";
+        
+        printf("%s\n",s.c_str());
+        printf("|   |");
+        for(int i = 0 ; i < C ; i++){
+            printf("%s", b[i].c_str() );
+            if( b[i].size() == 1 ) printf("  ");
+            if( b[i].size() == 2 ) printf(" ");
+            printf("|");
+        }
+        printf("\n");
+        printf("%s\n",s.c_str());
+        for(int i = 0 ; i < R ; i++){
+            printf("|%s", a[i].c_str() );
+            if( a[i].size() == 1 ) printf("  ");
+            if( a[i].size() == 2 ) printf(" ");
+            printf("|");
+            for(int j = 0 ; j < C ; j++)
+                printf("%s|",m[ m1[ a[i] ] ][ m2[ b[j] ] ].c_str());
+                
+            printf("\n");
+            printf("%s\n",s.c_str());
+        }
+        
+    }
+}

@@ -1,0 +1,100 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 10009
+#define ios ios::sync_with_stdio(0);
+#define N 30005
+
+pair< pii , int > P[200005];
+int ans[200005] , last[200005] , t[200005];
+
+int query(int x){
+    int sum = 0;
+    while( x > 0 ){
+        sum += t[ x ];
+        x -= x&-x;
+    }
+    return sum;
+}
+
+void update(int x,int val){
+    while( x < N-4 ){
+        t[x] += val;
+        x += x&-x;
+    }
+}
+int a[200005];
+
+int main(){
+    int n;
+    sc(n);
+    for(int i = 1 ; i <= n ; i++)
+        sc(a[i]);
+    
+    int q;
+    sc(q);
+    for(int i = 0 ; i < q ; i++)
+        sc(P[i].fi.se) , sc(P[i].fi.fi), P[i].se = i;
+    
+    
+    me(last,-1);
+    
+    sort( P , P + q );
+    int pos = 1;
+    
+    
+    for(int i = 0 ; i < q ; i++){
+        int x = P[i].fi.fi;
+        //cout << pos + 1 << " --> " << x << endl;
+        for(int j = pos ; j <= x ; j++){
+            if( last[ a[j] ] == -1 ){
+                update( j , 1 );
+                last[ a[j] ] = j;
+            }
+            else{
+                update( j , 1 );
+                update( last[ a[j] ] , -1 );
+                last[ a[j] ] = j;
+            }
+        }
+        pos = max(pos , x );
+        ans[ P[i].se ] = query( x ) - query( P[i].fi.se - 1 ); 
+    }
+    
+    for(int i = 0 ; i < q ; i++)
+        printf("%d\n",ans[ i ]);
+    
+    return 0;
+}

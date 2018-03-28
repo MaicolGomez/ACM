@@ -1,0 +1,101 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 250005
+
+int a[N] , n;
+int b[N] , T[505][50005];
+
+void update(int idx,int idy,int c){
+    for(int x = idx ; x <= 500 ; x += x&-x)
+        for(int y = idy ; y <= 50000 ; y += y& -y)
+            T[x][y] += c;
+}
+
+int query(int idx,int idy){
+    int ans = 0;
+    for(int x = idx; x ; x -= x&-x)
+        for(int y = idy ; y ; y -= y&-y)
+            ans += T[x][y];
+    return ans;
+}
+
+int f(int pos){
+    int x = (pos + 499)/500;
+    int ans = query( x - 1 , 50000 ) - query( x - 1 , a[pos] ) + query( 500 , a[pos] - 1 ) - query( x , a[pos] - 1 );
+    int r = min( x * 500 , n ) , l = x * 500 - 499;
+    
+    for(int i = l ; i < pos ; i++)
+        ans += (a[i] > a[pos]);
+        
+    for(int i = pos + 1 ; i <= r ; i++)
+        ans += (a[i] < a[pos]);
+    
+    return ans;
+}
+
+int main(){
+    while( sc(n) == 1 ){
+        for(int i = 1 ; i <= n ; i++)
+            sc(a[i]);
+        
+        ll ans = 0;
+        for(int i = 1 ; i <= n ; i++){
+            ans += i - 1;
+            for(int j = a[i] ; j ; j -= j&-j)
+                ans -= b[j];
+            for(int j = a[i] ; j <= N ; j += j&-j)
+                b[j]++;
+        }
+
+        for(int i = 1 ; i < n + 1 ; i++)
+            update( (i+499)/500 , a[i] , 1 );
+        
+        int q , x , y;
+        sc(q);
+        while( q-- ){
+            scanf("%d%d",&x,&y);
+            ans -= f( x );
+            update( (x + 499)/500 , a[x] , -1 );
+            update( (x + 499)/500 , y , 1 );
+            a[x] = y;
+            
+            ans += f( x );
+            printf("%lld\n",ans);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,101 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-5
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 100001
+
+struct Point{
+    double x , y;
+    Point(){}
+    Point(double X,double Y){ x = X , y = Y;}
+    Point ort(){ return Point( -y , x ); }
+    double mod2(){ return x * x + y * y; }
+    void read(){ scanf("%lf%lf",&x,&y); }
+};
+
+Point operator-(Point A,Point B){ return Point( A.x - B.x , A.y - B.y ); }
+Point operator+(Point A,Point B){ return Point( A.x + B.x , A.y + B.y ); }
+double cross(Point A,Point B){ return A.x * B.y - A.y * B.x; }
+double area(Point A,Point B,Point C){ return abs( cross(C - A , C - B) ); }
+double dot(Point A,Point B){ return A.x * B.x + A.y * B.y; }
+Point operator*(double r , Point A){ return Point( r * A.x , r * A.y ); }
+
+Point P[3];
+
+bool in(double x , double y , double r){
+    double S = 0;
+    for(int i = 0 ; i < 3 ; i++)
+        S += area( P[i] , P[(i+1)%3] , Point(x , y) );
+    
+    if( abs ( area( P[0] , P[1] , P[2] ) - S ) < eps ) return 1;
+    return 0;
+}
+
+Point lineIntersection(Point A,Point B,Point C,Point D){
+    double r = dot( C - A , (D - C).ort() )/dot( B - A , (D - C).ort() );
+    return A + r * ( B - A );
+}
+
+bool bet(Point A,Point B,Point C){
+    return min( A.x , B.x ) - eps <= C.x and
+           C.x <= max( A.x , B.x ) + eps and
+           min( A.y , B.y ) - eps <= C.y and
+           C.y <= max( A.y , B.y ) + eps;
+}
+
+int main(){
+    int tc;
+    sc(tc);
+    while( tc-- ){
+        for(int i = 0 ; i < 3 ; i++)
+            P[i].read();
+        double xc , yc , R;
+        scanf("%lf%lf%lf",&xc,&yc,&R);
+        bool good = 0;
+        if( in( xc , yc , R ) ) good = 1;
+        for(int i = 0 ; i < 3 ; i++)
+            if( R * R - Point( P[i].x - xc , P[i].y - yc ).mod2() >= -eps ) good = 1;
+        
+        for(int i = 0 ; i < 3 ; i++){
+            Point x = lineIntersection( P[i] , P[(i+1)%3] , Point(xc,yc) , Point(xc,yc) + (P[(i+1)%3] - P[i]).ort() );
+            if( R * R - (Point(xc,yc) - x).mod2() >= -eps and bet( P[i] , P[(i+1)%3] , x ) ) good = 1;
+        }
+        string ans = "NO";
+        if( good ) ans = "YES";
+        cout << ans << "\n";
+    }
+    return 0;
+}

@@ -1,0 +1,80 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<30)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define fi first
+#define se second
+#define MOD 10009
+#define N 30
+
+vi adj[N];
+int in[N];
+bool vis[N];
+
+void linking( char *a, char *b ){
+    for(int i = 0 ; i < strlen(a) && i < strlen(b) ; i++)
+        if( a[i] != b[i] ){
+            adj[ a[i] - 'A' ].pb( b[i] - 'A' );
+            in[ b[i] - 'A' ]++;
+            return;
+        }
+}
+
+int main(){
+    char S[5000][21];
+    int size = 0;
+    while( scanf("%s",S[size]) == 1 ){
+        if( S[size][0] == '#' ) break;
+        size++;
+    }
+    
+    for(int i = 0 ; i < size ; i++)
+        for(int j = 0 ; j < strlen( S[i] ) ; j++)
+            vis[ S[i][j] - 'A' ] = 1;
+
+    for(int i = 0 ; i < size - 1 ; i++)
+        linking( S[i] , S[i+1] );
+    
+    queue<int> Q;
+    for(int i = 0 ; i < 26 ; i++)
+        if( in[i] == 0 && vis[i] ) Q.push(i);
+    
+    while( !Q.empty() ){
+        int q = Q.front(); Q.pop();
+        printf("%c",q+'A');
+        for(int i = 0 ; i < adj[q].size() ; i++){
+            int v = adj[q][i];
+            if( --in[v] == 0 ) Q.push(v);
+        }
+    }
+    printf("\n");
+    
+    
+    return 0;
+}

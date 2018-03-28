@@ -1,0 +1,6 @@
+#include<cstdio>
+#include<vector>
+vector<int> a(1);
+int main(){
+    int b = a[a.size()];
+}

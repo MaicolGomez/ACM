@@ -1,0 +1,85 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0);
+#define N 10005
+
+vi adj[N] , cost[N] , ind[N];
+int r , n;
+double s1,s2;
+pair<double,int> A[N];
+
+int dfs(int u,int f){
+    int l = 1;
+    for(int i = adj[u].size() - 1 ; i >= 0 ; i--){
+        int v = adj[u][i];
+        if( v != f ){
+            int x = dfs( v , u );
+            A[r++] = mp( 1.0 * x * ( n - x ) * cost[u][i] / ( s1 - s2 )  , ind[u][i] );
+            l += x;
+        }
+    }
+    return l;
+    
+}
+
+int ans[N];
+
+int main(){
+    int k , a , b , c;
+    while( scanf("%d%d%lf%lf",&n,&k,&s1,&s2) == 4 ){
+        for(int i = 0 ; i < n + 2 ; i++)
+            adj[i].clear() , cost[i].clear() , ind[i].clear();
+            
+        for(int i = 0 ; i < n -1 ; i++){
+            sc(a),sc(b),sc(c); a--,b--;
+            adj[a].pb(b) , cost[a].pb(c);
+            adj[b].pb(a) , cost[b].pb(c);
+            ind[a].pb(i+1);
+            ind[b].pb(i+1);
+        }
+        r = 0;
+        dfs( 0 , -1 );
+        
+        sort( A , A + r );
+        printf("%d",A[0].se);
+        for(int i = 1 ; i < k ; i++)
+            printf(" %d",A[i].se);
+        
+        printf("\n");
+    }
+    return 0;
+}

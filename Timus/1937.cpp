@@ -1,0 +1,138 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define N 100005
+#define BB 27
+
+char a[N] , b[N];
+ll A[2][N] , AA[2][N] , B[2][N] , C[2][N];
+
+ll f(ll a,ll b,ll MOD){
+    if( b == 0 ) return 1;
+    if( b % 2 == 0 ){
+        ll t = f(a,b/2,MOD);
+        return (t*t)%MOD;
+    }
+    return ( a * f( a , b - 1 ,MOD ) ) % MOD;
+}
+
+ll MOD[2] = { 1000000007 , 1000000009 };
+ll inv[2] = { f( BB , MOD[0] - 2 , MOD[0] ) , f( BB , MOD[1] - 2 , MOD[1] ) };
+
+
+void H(ll h[2][N],char *s,int n){
+    ll hash[2] = { 0 , 0 } , pot[2] = { 1 , 1 };
+    for(int i = 0 ; i < n ; i++){
+        for(int j = 0 ; j < 2 ; j++){
+            hash[j] = hash[j] * BB + ( s[i] - 'a' + 1 );
+            hash[j] %= MOD[j];
+            if( i != n - 1 ) pot[j] = (pot[j] * BB) % MOD[j];
+        }
+    }
+    for(int i = 0 ; i < 2 ; i++)
+        h[i][0] = hash[i];
+        
+    int l = strlen(s);
+    for(int i = 1 ; i < l ; i++){
+        int go = (i+n-1)%l;
+        for(int j = 0 ; j < 2 ; j++)
+            h[j][i] = (  ((((h[j][i-1] - (s[i-1] - 'a' + 1) * pot[j] )%MOD[j] + MOD[j]))%MOD[j])*BB + (s[go] - 'a' + 1) )%MOD[j];
+    }
+}
+
+
+void R(ll h[2][N] ,char *s,int n){
+    ll hash[2] = { 0 , 0 } , pot[2] = { 1 , 1 };
+    for(int i = 0 ; i < n ; i++){
+        for(int j = 0 ; j < 2 ; j++){
+            hash[j] = hash[j] + pot[j] * ( s[i] - 'a' + 1 );
+            hash[j] %= MOD[j];
+            if( i != n-1 ) pot[j] = (pot[j] * BB)%MOD[j];
+        }
+    }
+    for(int i = 0 ; i < 2 ; i++)
+        h[i][0] = hash[i];
+    
+    int l = strlen(s);
+    for(int i = 1 ; i < l ; i++){
+        int go = (i+n-1)%l;
+        for(int j = 0 ; j < 2 ; j++)
+            h[j][i] = (((((h[j][i-1] - (s[i-1] - 'a' + 1))%MOD[j] + MOD[j])%MOD[j])* inv[j])%MOD[j] + (s[go] - 'a' + 1) * pot[j] )%MOD[j];
+    }
+}
+
+pair< pair<ll,ll> , int > HS[N];
+
+int find(ll x[2],int m){
+    if( HS[0].fi.fi > x[0] ) return -1;
+    if( HS[m-1].fi.fi < x[0] ) return -1;
+    int lo = 0 , hi = m - 1;
+    while( lo + 1 < hi ){
+        int mid = M(lo,hi);
+        if( HS[mid].fi.fi <= x[0] ) lo = mid;
+        else hi = mid;
+    }
+    return ((HS[lo].fi.fi == x[0] && HS[lo].fi.se == x[1] )?HS[lo].se:-1);
+}
+
+int main(){
+    scanf("%s",a);
+    scanf("%s",b);
+    int n = strlen( a ) , m = strlen(b);
+    H( A , a , n - m );
+    R( AA , a , n - m );
+    H( B , a , m );
+    R( C , b , m );
+    
+    for(int i = 0 ; i < m ; i++)
+        HS[i].fi.fi = C[0][i] , HS[i].fi.se = C[1][i] , HS[i].se = i;
+    
+    sort( HS , HS + m );
+    
+    for(int i = 0 ; i < n ; i++){
+        if( A[0][i] == AA[0][i] && A[1][i] == AA[1][i] ){
+            int go = (i + n - m)%n;
+            ll need[2] = { B[0][go] , B[1][go] };
+
+            int r = find( need , m );
+            if( r != -1 ){
+                printf("Yes\n");
+                printf("%d %d\n",go+1,r+1);
+                return 0;
+            }
+        }
+    }
+    printf("No\n");
+    return 0;
+}

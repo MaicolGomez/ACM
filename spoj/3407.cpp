@@ -1,0 +1,63 @@
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<vector>
+#include<cmath>
+#include<algorithm>
+#include<climits>
+#include<set>
+#include<deque>
+#include<queue>
+#include<map>
+#include<climits>
+#include<string>
+#include<stack>
+#include<sstream>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<30)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define fi first
+#define se second
+#define MOD 10009
+#define N 100005
+
+int R , C , t[N];
+int p[N];
+
+int main(){
+    while( scanf("%d%d",&R,&C) == 2 && (R||C) ){
+        vector< vi > v(R);
+        for(int i = 0 ; i < R ; i++){
+            vi x(C);
+            for(int j = 0 ; j < C ; j++)
+                sc(x[j]);
+            v[i] = x;
+        }
+        
+        for(int i = 0 ; i < R ; i++){
+            t[C] = t[C+1] = 0;
+            for(int j = C - 1 ; j >= 0 ; j--)
+                t[j] = max( t[j+1] , v[i][j] + t[j+2] );
+            p[i] = t[0];
+        }
+        t[R] = t[R+1] = 0; 
+        for(int j = R - 1 ; j >= 0 ; j--)
+            t[j] = max( t[j+1] , p[j] + t[j+2] );
+            
+        printf("%d\n",t[0] );
+        
+    }
+    return 0;
+}

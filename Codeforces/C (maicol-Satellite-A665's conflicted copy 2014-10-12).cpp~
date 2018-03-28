@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define pi (2.0*acos(0.0))
+#define eps 1e-6
+#define ll long long
+#define inf (1<<29)
+#define vi vector<int>
+#define vll vector<ll>
+#define sc(x) scanf("%d",&x)
+#define scl(x) scanf("%lld",&x)
+#define all(v) v.begin() , v.end()
+#define me(a,val) memset( a , val ,sizeof(a) )
+#define pb(x) push_back(x)
+#define pii pair<int,int> 
+#define mp(a,b) make_pair(a,b)
+#define Q(x) (x) * (x)
+#define L(x) ((x<<1) + 1)
+#define R(x) ((x<<1) + 2)
+#define M(x,y) ((x+y)>>1)
+#define fi first
+#define se second
+#define MOD 1000000007
+#define ios ios::sync_with_stdio(0)
+#define N 5
+
+int a[N][2];
+
+bool win1(int x,int y){
+    for(int i = 0 ; i < 2 ; i++){
+        int atack = a[i][0] , defense = a[i^1][1];
+        int ct = 0;
+        int t1 = a[2][0] , t2 = a[3][1];
+        if( atack > t1 and defense > t2 ) ct++;
+        t1 = a[3][0] , t2 = a[2][1];
+        if( atack > t1 and defense > t2 ) ct++;
+        if( ct >= 2 ) return 1;
+    }
+    return 0;
+}
+
+bool win2(int x,int y){
+    int g = max( a[0][0] , a[1][0] );
+    int h = max( a[0][1] , a[1][1] );
+    if( g >= max( a[2][0] , a[3][0] ) or h >= max( a[2][1] , a[3][1] ) ) return 0;
+    for(int i = 0 ; i < 2 ; i++){
+        int atack = a[2 + i][0] , defense = a[2 + i^1][1];
+        int t1 = a[0][0] , t2 = a[1][1];
+        if( atack > t1 and defense > t2 ) return 1;
+        t1 = a[1][0] , t2 = a[0][1];
+        if( atack > t1 and defense > t2 ) return 1;
+    }
+    return 0;
+}
+
+int main(){
+    for(int i = 0 ; i < 4 ; i++)
+        cin >> a[i][0] >> a[i][1];
+    
+    if( win1( 0 , 1 ) ) cout << "Team 1\n";
+    else if( win2( 2 , 3 ) ) cout << "Team 2\n";
+    else cout << "Draw\n";
+    
+    return 0;
+}
